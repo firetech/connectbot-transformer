@@ -104,7 +104,7 @@ public class TerminalKeyListener implements OnKeyListener, OnSharedPreferenceCha
 		hardKeyboard = (manager.res.getConfiguration().keyboard
 				== Configuration.KEYBOARD_QWERTY);
 
-		hardKeyboard = hardKeyboard && !Build.MODEL.equals("Transformer TF101");
+		hardKeyboard = hardKeyboard && !Build.MODEL.contains("Transformer");
 
 		updateKeymode();
 	}
