@@ -74,6 +74,8 @@ public class TerminalKeyListener implements OnKeyListener, OnSharedPreferenceCha
 	private boolean hardKeyboard = false;
 	private boolean isTransformer = false;
 
+	private boolean exitOnBack = false;
+
 	private int metaState = 0;
 
 	private int mDeadKey = 0;
@@ -121,6 +123,15 @@ public class TerminalKeyListener implements OnKeyListener, OnSharedPreferenceCha
 
 			// Ignore all key-up events except for the special keys
 			if (event.getAction() == KeyEvent.ACTION_UP) {
+				if (isTransformer && keyCode == KeyEvent.KEYCODE_BACK) {
+					if (exitOnBack) {
+						exitOnBack = false;
+						return false;
+					} else {
+						sendEscape();
+						return true;
+					}
+				}
 
 				// There's nothing here for virtual keyboard users.
 				if (!hardKeyboard || (hardKeyboard && hardKeyboardHidden))
@@ -321,6 +332,14 @@ public class TerminalKeyListener implements OnKeyListener, OnSharedPreferenceCha
 					case KeyEvent.KEYCODE_SHIFT_RIGHT:
 						metaPress(META_SHIFT_ON);
 						return true;
+					}
+				}
+			}
+
+			if (isTransformer) {
+				if (keyCode == KeyEvent.KEYCODE_BACK) {
+					if (event.getRepeatCount() > 0) {
+						exitOnBack = true;
 					}
 				}
 			}
