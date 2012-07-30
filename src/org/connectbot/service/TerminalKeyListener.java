@@ -72,6 +72,7 @@ public class TerminalKeyListener implements OnKeyListener, OnSharedPreferenceCha
 
 	private String keymode = null;
 	private boolean hardKeyboard = false;
+	private boolean isTransformer = false;
 
 	private int metaState = 0;
 
@@ -101,10 +102,11 @@ public class TerminalKeyListener implements OnKeyListener, OnSharedPreferenceCha
 		prefs = PreferenceManager.getDefaultSharedPreferences(manager);
 		prefs.registerOnSharedPreferenceChangeListener(this);
 
-		hardKeyboard = (manager.res.getConfiguration().keyboard
-				== Configuration.KEYBOARD_QWERTY);
+		isTransformer = Build.MODEL.contains("Transformer");
 
-		hardKeyboard = hardKeyboard && !Build.MODEL.contains("Transformer");
+		hardKeyboard = (manager.res.getConfiguration().keyboard
+				== Configuration.KEYBOARD_QWERTY) && !isTransformer;
+
 
 		updateKeymode();
 	}
@@ -119,6 +121,7 @@ public class TerminalKeyListener implements OnKeyListener, OnSharedPreferenceCha
 
 			// Ignore all key-up events except for the special keys
 			if (event.getAction() == KeyEvent.ACTION_UP) {
+
 				// There's nothing here for virtual keyboard users.
 				if (!hardKeyboard || (hardKeyboard && hardKeyboardHidden))
 					return false;
@@ -190,10 +193,12 @@ public class TerminalKeyListener implements OnKeyListener, OnSharedPreferenceCha
 			}
 
 			int key = event.getUnicodeChar(curMetaState);
-			// no hard keyboard?  ALT-k should pass through to below
-			if ((orgMetaState & KeyEvent.META_ALT_ON) != 0 &&
-					(!hardKeyboard || hardKeyboardHidden)) {
-				key = 0;
+			if (!isTransformer) {
+				// no hard keyboard?  ALT-k should pass through to below
+				if ((orgMetaState & KeyEvent.META_ALT_ON) != 0 &&
+						(!hardKeyboard || hardKeyboardHidden)) {
+					key = 0;
+				}
 			}
 
 			if ((key & KeyCharacterMap.COMBINING_ACCENT) != 0) {
