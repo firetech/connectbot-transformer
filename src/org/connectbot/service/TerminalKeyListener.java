@@ -340,6 +340,7 @@ public class TerminalKeyListener implements OnKeyListener, OnSharedPreferenceCha
 				if (keyCode == KeyEvent.KEYCODE_BACK) {
 					if (event.getRepeatCount() > 0) {
 						exitOnBack = true;
+						return false;
 					}
 				}
 			}
